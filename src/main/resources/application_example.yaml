@@ -1,0 +1,40 @@
+spring:
+  application:
+    name: name_api
+
+  jackson:
+    time-zone: America/Sao_Paulo
+    date-format: yyyy-MM-dd HH:mm:ss
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/db_name?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=America/Sao_Paulo
+    username: username
+    password: password
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    locations: classpath:db/migration
+    validate-on-migrate: true
+    schemas: schema_name
+
+    #  LOG PARA DEBUGS
+    logging:
+      level:
+        org:
+          springframework:
+            web:
+              servlet:
+                mvc:
+                  method:
+                    annotation:
+                      ExceptionHandlerExceptionResolver: DEBUG
