@@ -1,7 +1,7 @@
 package com.stock_control.api.services;
 
 import com.stock_control.api.dtos.categoy.CategoryCreate;
-import com.stock_control.api.dtos.categoy.CategoryRequest;
+import com.stock_control.api.dtos.categoy.CategoryResponse;
 import com.stock_control.api.dtos.categoy.CategoryUpdate;
 import com.stock_control.api.entities.Category;
 import com.stock_control.api.exceptions.BusinessException;
@@ -26,40 +26,40 @@ public class CategoryService {
     }
 
     @Transactional
-    public CategoryRequest createCategory(CategoryCreate create) {
+    public CategoryResponse createCategory(CategoryCreate create) {
         Category category = categoryMapper.toCategory(create);
 
         category = categoryRepository.save(category);
 
-        return categoryMapper.toCategoryRequest(category);
+        return categoryMapper.toCategoryResponse(category);
     }
 
     @Transactional(readOnly = true)
-    public List<CategoryRequest> getAllCategories() {
+    public List<CategoryResponse> getAllCategories() {
         return categoryRepository.findAll()
                 .stream()
-                .map(categoryMapper::toCategoryRequest)
+                .map(categoryMapper::toCategoryResponse)
                 .toList();
     }
 
     @Transactional(readOnly = true)
-    public CategoryRequest getCategoryById(UUID id) {
+    public CategoryResponse getCategoryById(UUID id) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Categoria não encontrada com esse id: " + id));
 
-        return categoryMapper.toCategoryRequest(category);
+        return categoryMapper.toCategoryResponse(category);
     }
 
     @Transactional(readOnly = true)
-    public List<CategoryRequest> getAllInactivatedCategories() {
+    public List<CategoryResponse> getAllInactivatedCategories() {
         return categoryRepository.findAllInactivated()
                 .stream()
-                .map(categoryMapper::toCategoryRequest)
+                .map(categoryMapper::toCategoryResponse)
                 .toList();
     }
 
     @Transactional
-    public CategoryRequest updateCategory(UUID id, CategoryUpdate update) {
+    public CategoryResponse updateCategory(UUID id, CategoryUpdate update) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Categoria não encontrada com esse id: " + id));
 
@@ -67,7 +67,7 @@ public class CategoryService {
 
         categoryRepository.save(category);
 
-        return categoryMapper.toCategoryRequest(category);
+        return categoryMapper.toCategoryResponse(category);
     }
 
     @Transactional

@@ -1,7 +1,7 @@
 package com.stock_control.api.controllers;
 
 import com.stock_control.api.dtos.categoy.CategoryCreate;
-import com.stock_control.api.dtos.categoy.CategoryRequest;
+import com.stock_control.api.dtos.categoy.CategoryResponse;
 import com.stock_control.api.dtos.categoy.CategoryUpdate;
 import com.stock_control.api.mappers.ResourceUriHelper;
 import com.stock_control.api.services.CategoryService;
@@ -33,8 +33,8 @@ public class CategoryController implements ResourceUriHelper {
     }
 
     @PostMapping
-    public ResponseEntity<CategoryRequest> create(@RequestBody @Valid CategoryCreate create) {
-        CategoryRequest request = categoryService.createCategory(create);
+    public ResponseEntity<CategoryResponse> create(@RequestBody @Valid CategoryCreate create) {
+        CategoryResponse request = categoryService.createCategory(create);
 
         URI location = createUriForId(request.id());
 
@@ -42,25 +42,25 @@ public class CategoryController implements ResourceUriHelper {
     }
 
     @GetMapping
-    public ResponseEntity<List<CategoryRequest>> getAllCategories(@RequestParam(required = false, defaultValue = "false") boolean inactivated) {
+    public ResponseEntity<List<CategoryResponse>> getAllCategories(@RequestParam(required = false, defaultValue = "false") boolean inactivated) {
 
         if(inactivated) {
-            List<CategoryRequest> list = categoryService.getAllInactivatedCategories();
+            List<CategoryResponse> list = categoryService.getAllInactivatedCategories();
             return ResponseEntity.ok(list);
         }
 
-        List<CategoryRequest> list = categoryService.getAllCategories();
+        List<CategoryResponse> list = categoryService.getAllCategories();
         return ResponseEntity.ok(list);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CategoryRequest> getCategory(@PathVariable UUID id) {
+    public ResponseEntity<CategoryResponse> getCategory(@PathVariable UUID id) {
         return ResponseEntity.ok(categoryService.getCategoryById(id));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CategoryRequest> updateCategory(@PathVariable UUID id,
-                                                          @RequestBody @Valid CategoryUpdate update) {
+    public ResponseEntity<CategoryResponse> updateCategory(@PathVariable UUID id,
+                                                           @RequestBody @Valid CategoryUpdate update) {
         return ResponseEntity.ok(categoryService.updateCategory(id, update));
     }
 

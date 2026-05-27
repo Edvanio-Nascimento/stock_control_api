@@ -1,7 +1,7 @@
 package com.stock_control.api.mappers.category;
 
 import com.stock_control.api.dtos.categoy.CategoryCreate;
-import com.stock_control.api.dtos.categoy.CategoryRequest;
+import com.stock_control.api.dtos.categoy.CategoryResponse;
 import com.stock_control.api.dtos.categoy.CategoryUpdate;
 import com.stock_control.api.entities.Category;
 import org.mapstruct.Mapper;
@@ -15,7 +15,7 @@ public interface CategoryMapper {
 
     Category toCategory(CategoryCreate create);
 
-    CategoryRequest toCategoryRequest(Category category);
+    CategoryResponse toCategoryResponse(Category category);
 
     void updateCategory(CategoryUpdate update, @MappingTarget Category category);
 

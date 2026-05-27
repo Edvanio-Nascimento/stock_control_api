@@ -2,7 +2,7 @@ package com.stock_control.api.dtos.categoy;
 
 import java.util.UUID;
 
-public record CategoryRequest(
+public record CategoryResponse(
 
         UUID id,
 
