@@ -1,13 +1,16 @@
 package com.stock_control.api.exceptions;
 
-import com.stock_control_api.exceptions.errors.FieldErrorResponse;
-import com.stock_control_api.exceptions.errors.ValidationErrorResponse;
+import com.stock_control.api.exceptions.errors.FieldErrorResponse;
+import com.stock_control.api.exceptions.errors.StandardError;
+import com.stock_control.api.exceptions.errors.ValidationErrorResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -26,6 +29,19 @@ public class GlobalExceptionHandler {
         error.put("message: ", ex.getMessage());
 
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<StandardError> business(BusinessException e, HttpServletRequest request) {
+        HttpStatus status = HttpStatus.BAD_REQUEST; // Código 400
+        StandardError err = new StandardError(
+                Instant.now(),
+                status.value(),
+                "Violação de regra de negócio",
+                e.getMessage(),
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(status).body(err);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
