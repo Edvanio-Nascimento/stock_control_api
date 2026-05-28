@@ -6,6 +6,7 @@ import com.stock_control.api.dtos.categoy.CategoryUpdate;
 import com.stock_control.api.mappers.ResourceUriHelper;
 import com.stock_control.api.services.CategoryService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -42,14 +44,10 @@ public class CategoryController implements ResourceUriHelper {
     }
 
     @GetMapping
-    public ResponseEntity<List<CategoryResponse>> getAllCategories(@RequestParam(required = false, defaultValue = "false") boolean inactivated) {
+    public ResponseEntity<List<CategoryResponse>> getAllCategories(@RequestParam(required = false, defaultValue = "false") boolean inactivated,
+                                                                    @RequestParam(required = false) String name) {
 
-        if(inactivated) {
-            List<CategoryResponse> list = categoryService.getAllInactivatedCategories();
-            return ResponseEntity.ok(list);
-        }
-
-        List<CategoryResponse> list = categoryService.getAllCategories();
+        List<CategoryResponse> list = categoryService.getFilteredCategories(name, inactivated);
         return ResponseEntity.ok(list);
     }
 

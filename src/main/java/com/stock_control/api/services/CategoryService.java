@@ -11,6 +11,7 @@ import com.stock_control.api.repositories.CategoryRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -27,6 +28,10 @@ public class CategoryService {
 
     @Transactional
     public CategoryResponse createCategory(CategoryCreate create) {
+        if (categoryRepository.existsByNameIgnoreCase(create.name())){
+            throw new BusinessException("Já existe uma categoria cadastrada com esse nome: " + create.name());
+        }
+
         Category category = categoryMapper.toCategory(create);
 
         category = categoryRepository.save(category);
@@ -51,8 +56,23 @@ public class CategoryService {
     }
 
     @Transactional(readOnly = true)
-    public List<CategoryResponse> getAllInactivatedCategories() {
-        return categoryRepository.findAllInactivated()
+    public List<CategoryResponse> getFilteredCategories(String name, boolean inactived) {
+
+        if (name != null && !name.isEmpty()) {
+            return categoryRepository.findByNameContainingIgnoreCase(name)
+                    .stream()
+                    .map(categoryMapper::toCategoryResponse)
+                    .toList();
+        }
+
+        if (inactived) {
+            return categoryRepository.findAllInactivated()
+                    .stream()
+                    .map(categoryMapper::toCategoryResponse)
+                    .toList();
+        }
+
+        return categoryRepository.findAll()
                 .stream()
                 .map(categoryMapper::toCategoryResponse)
                 .toList();
@@ -63,9 +83,12 @@ public class CategoryService {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Categoria não encontrada com esse id: " + id));
 
-        categoryMapper.updateCategory(update, category);
+        if (!category.getName().equalsIgnoreCase(update.name()) &&
+                categoryRepository.existsByNameIgnoreCase(update.name())) {
+            throw new BusinessException("Não é possível atualizar. Já existe outra categoria com o nome: " + update.name());
+        }
 
-        categoryRepository.save(category);
+        categoryMapper.updateCategory(update, category);
 
         return categoryMapper.toCategoryResponse(category);
     }

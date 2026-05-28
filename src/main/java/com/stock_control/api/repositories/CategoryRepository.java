@@ -19,4 +19,8 @@ public interface CategoryRepository extends JpaRepository<Category, UUID> {
     @Query(value = "SELECT * FROM tb_categories WHERE active = false", nativeQuery = true)
     List<Category> findAllInactivated();
 
+    List<Category> findByNameContainingIgnoreCase(String name);
+
+    boolean existsByNameIgnoreCase(String name);
+
 }
